@@ -10,7 +10,7 @@ Features:</br>
 
 Add the following dependency to your build.gradle:</br>
 ```groovy
-implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.0.0'
+implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.1.0'
 ```
 Usage:
 
@@ -26,8 +26,9 @@ class MainViewModel: ViewModel() {
     val selectedCurrency: LifecycleAwareObserver<String> = _selectedCurrency
 
     fun updateValue() {
-        _selectedCurrency.asyncUpdate("New value")
+        _selectedCurrency.update("New value", updateMode = UpdateMode.ASYNC)
     }
+
 }
 ```
 
