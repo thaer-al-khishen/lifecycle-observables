@@ -6,10 +6,12 @@ Features:</br>
 <b>Concurrency Control:</b> Built-in concurrency mechanisms to ensure data integrity.</br>
 <b>Easy Integration:</b> Seamlessly integrates with Android's ViewModel and Lifecycle components.</br>
 
-Installation
-Add the following dependency to your build.gradle:</br>
-implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.0.0'
+<b>Installation:</b></br>
 
+Add the following dependency to your build.gradle:</br>
+```groovy
+implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.0.0'
+```
 Usage:
 
 ```kotlin
