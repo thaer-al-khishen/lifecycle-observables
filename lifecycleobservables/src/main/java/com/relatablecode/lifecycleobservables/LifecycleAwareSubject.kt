@@ -22,7 +22,7 @@ class LifecycleAwareSubject<T>(
     onDestroy: () -> Unit = {},
     instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
     destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
-    shouldSurviveConfigurationChange: Boolean = false
+    shouldSurviveConfigurationChange: Boolean = false,
 ) : LifecycleAwareObserver<T>(
     initialValue,
     onChange,
