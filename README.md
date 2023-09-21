@@ -7,7 +7,7 @@ Features:</br>
 <b>Easy Integration:</b> Seamlessly integrates with Android's ViewModel and Lifecycle components.</br>
 
 Installation
-Add the following dependency to your build.gradle:
+Add the following dependency to your build.gradle:</br>
 implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.0.0'
 
 Usage:
