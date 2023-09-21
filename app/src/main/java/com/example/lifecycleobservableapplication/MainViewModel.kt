@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.relatablecode.lifecycleobservables.LifecycleAwareObserver
 import com.relatablecode.lifecycleobservables.LifecycleAwareSubject
+import com.relatablecode.lifecycleobservables.UpdateMode
 
 class MainViewModel: ViewModel() {
 
@@ -16,7 +17,7 @@ class MainViewModel: ViewModel() {
     val selectedCurrency: LifecycleAwareObserver<String> = _selectedCurrency
 
     fun updateValue() {
-        _selectedCurrency.asyncUpdate("New value")
+        _selectedCurrency.update("New value", updateMode = UpdateMode.ASYNC)
     }
 
 }

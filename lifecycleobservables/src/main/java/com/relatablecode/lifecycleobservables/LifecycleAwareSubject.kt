@@ -11,8 +11,8 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class LifecycleAwareSubject<T>(
-    initialValue: (() -> T)? = null,
     private val coroutineScope: CoroutineScope,
+    initialValue: (() -> T)? = null,
     onChange: (old: T?, new: T?) -> Unit = { _, _ -> },
     onCreate: () -> Unit = {},
     onStart: () -> Unit = {},
@@ -22,7 +22,7 @@ class LifecycleAwareSubject<T>(
     onDestroy: () -> Unit = {},
     instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
     destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
-    shouldSurviveConfigurationChange: Boolean = true
+    shouldSurviveConfigurationChange: Boolean = false
 ) : LifecycleAwareObserver<T>(
     initialValue,
     onChange,
@@ -39,38 +39,114 @@ class LifecycleAwareSubject<T>(
 
     private val mutex = Mutex()
 
+    override fun setInitialValue(_initialValue: () -> T): LifecycleAwareSubject<T> {
+        super.setInitialValue(_initialValue)
+        return this
+    }
+
+    override fun setOnChange(_onChange: (old: T?, new: T?) -> Unit): LifecycleAwareSubject<T> {
+        super.setOnChange(_onChange)
+        return this
+    }
+
+    override fun setOnCreate(_onCreate: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnCreate(_onCreate)
+        return this
+    }
+
+    override fun setOnStart(_onStart: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnStart(_onStart)
+        return this
+    }
+
+    override fun setOnResume(_onResume: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnResume(_onResume)
+        return this
+    }
+
+    override fun setOnPause(_onPause: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnPause(_onPause)
+        return this
+    }
+
+    override fun setOnStop(_onStop: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnStop(_onStop)
+        return this
+    }
+
+    override fun setOnDestroy(_onDestroy: () -> Unit): LifecycleAwareSubject<T> {
+        super.setOnDestroy(_onDestroy)
+        return this
+    }
+
+    override fun setInstantiatedAt(_instantiatedAt: Lifecycle.Event): LifecycleAwareSubject<T> {
+        super.setInstantiatedAt(_instantiatedAt)
+        return this
+    }
+
+    override fun setDestroyedAt(_destroyedAt: Lifecycle.Event): LifecycleAwareSubject<T> {
+        super.setDestroyedAt(_destroyedAt)
+        return this
+    }
+
+    override fun setShouldSurviveConfigurationChange(_shouldSurviveConfigurationChange: Boolean): LifecycleAwareSubject<T> {
+        super.setShouldSurviveConfigurationChange(_shouldSurviveConfigurationChange)
+        return this
+    }
+
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-        val oldValue = this.value
-        coroutineScope.launch {
-            mutex.withLock {
-                this@LifecycleAwareSubject.value = value
-                withContext(Dispatchers.Main) {
-                    onChange.invoke(oldValue, value)
-                    observers.forEach { it(oldValue, value) }
-                }
-            }
+        asyncUpdate(value)
+    }
+
+    private fun shouldUpdate(
+        oldValue: T?,
+        newValue: T?,
+        updateCondition: UpdateCondition
+    ): Boolean {
+        return when (updateCondition) {
+            UpdateCondition.UNIQUE -> oldValue != newValue
+            UpdateCondition.FIRST_ONLY -> oldValue == initialValue?.invoke()
+            UpdateCondition.NONE -> true
         }
     }
 
-    fun asyncUpdate(newValue: T?) {
+    private fun asyncUpdate(newValue: T?, updateCondition: UpdateCondition = UpdateCondition.NONE) {
         val oldValue = this.value
-        coroutineScope.launch {
-            mutex.withLock {
-                this@LifecycleAwareSubject.value = newValue
-                withContext(Dispatchers.Main) {
-                    onChange.invoke(oldValue, newValue)
-                    observers.forEach { it(oldValue, newValue) }
+        if (shouldUpdate(oldValue, newValue, updateCondition)) {
+            coroutineScope.launch {
+                mutex.withLock {
+                    this@LifecycleAwareSubject.value = newValue
+                    withContext(Dispatchers.Main) {
+                        onChange.invoke(oldValue, newValue)
+                        observers.forEach { it(oldValue, newValue) }
+                    }
                 }
             }
         }
     }
 
     @Synchronized
-    fun synchronizedUpdate(newValue: T?) {
+    private fun synchronizedUpdate(
+        newValue: T?,
+        updateCondition: UpdateCondition = UpdateCondition.NONE
+    ) {
         val oldValue = this.value
-        this@LifecycleAwareSubject.value = newValue
-        onChange.invoke(oldValue, newValue)
-        observers.forEach { it(oldValue, newValue) }
+        if (shouldUpdate(oldValue, newValue, updateCondition)) {
+            this@LifecycleAwareSubject.value = newValue
+            onChange.invoke(oldValue, newValue)
+            observers.forEach { it(oldValue, newValue) }
+        }
+    }
+
+    fun update(
+        newValue: T?,
+        updateMode: UpdateMode = UpdateMode.ASYNC,
+        updateCondition: UpdateCondition = UpdateCondition.NONE
+    ) {
+        when (updateMode) {
+            UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
+            UpdateMode.ASYNC -> synchronizedUpdate(newValue, updateCondition)
+        }
     }
 
 }
