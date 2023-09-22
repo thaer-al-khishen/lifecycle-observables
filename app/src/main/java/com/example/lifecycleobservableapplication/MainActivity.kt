@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.relatablecode.lifecycleobservables.UpdateCondition
+import com.relatablecode.lifecycleobservables.asStateFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,10 +22,13 @@ class MainActivity : AppCompatActivity() {
             viewModel.updateValue()
         }
 
-        viewModel.selectedCurrency.observe(lifecycle) {old, new ->
-            Log.d("ThaerOutput", old.toString())
-            Log.d("ThaerOutput", new.toString())
+        lifecycleScope.launch {
+            viewModel.selectedCurrency.asStateFlow(lifecycle, updateCondition = UpdateCondition.FIRST_ONLY).collect {
+                Log.d("ThaerOutput", it.toString())
+//                Log.d("ThaerOutput", new.toString())
+            }
         }
+
 
     }
 

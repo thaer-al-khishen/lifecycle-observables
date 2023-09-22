@@ -8,16 +8,19 @@ import com.relatablecode.lifecycleobservables.UpdateMode
 
 class MainViewModel: ViewModel() {
 
+    private var count = 0
+
     private val _selectedCurrency = LifecycleAwareSubject(
-        initialValue = { "Old value" },
+        initialValue = { 0 },
         coroutineScope = viewModelScope,
         shouldSurviveConfigurationChange = false
     )
 
-    val selectedCurrency: LifecycleAwareObserver<String> = _selectedCurrency
+    val selectedCurrency: LifecycleAwareObserver<Int> = _selectedCurrency
 
     fun updateValue() {
-        _selectedCurrency.update("New value", updateMode = UpdateMode.ASYNC)
+        count++
+        _selectedCurrency.update(count, updateMode = UpdateMode.ASYNC)
     }
 
 }

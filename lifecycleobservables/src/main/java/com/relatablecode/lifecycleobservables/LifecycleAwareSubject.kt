@@ -145,7 +145,7 @@ class LifecycleAwareSubject<T>(
     ) {
         when (updateMode) {
             UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
-            UpdateMode.ASYNC -> synchronizedUpdate(newValue, updateCondition)
+            UpdateMode.ASYNC -> asyncUpdate(newValue, updateCondition)
         }
     }
 

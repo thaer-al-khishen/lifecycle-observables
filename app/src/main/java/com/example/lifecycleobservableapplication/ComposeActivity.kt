@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.lifecycleobservableapplication.ui.theme.LifecycleObservableApplicationTheme
+import com.relatablecode.lifecycleobservables.UpdateCondition
 import com.relatablecode.lifecycleobservables.asStateFlow
 import com.relatablecode.lifecycleobservables.collectAsStateWithLifecycle
 
@@ -42,7 +43,7 @@ class ComposeActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: MainViewModel) {
 
-    val viewModelValue = viewModel.selectedCurrency.collectAsStateWithLifecycle()
+    val viewModelValue = viewModel.selectedCurrency.collectAsStateWithLifecycle(updateCondition = UpdateCondition.FIRST_ONLY)
 
     Text(
         text = "Hello ${viewModelValue.value}!",
@@ -51,11 +52,3 @@ fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: MainViewMod
         }
     )
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    LifecycleObservableApplicationTheme {
-//        Greeting("Android")
-//    }
-//}

@@ -26,6 +26,14 @@
             android:name=".MainActivity"
             android:exported="false">
         </activity>
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="false">-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name=".ComposeActivity"-->
+<!--            android:exported="false">-->
+<!--        </activity>-->
     </application>
 
 </manifest>
