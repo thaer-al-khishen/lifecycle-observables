@@ -3,6 +3,8 @@ package com.relatablecode.lifecycleobservables
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.properties.ReadOnlyProperty
@@ -18,7 +20,7 @@ open class LifecycleAwareObserver<T>(
     private var onStop: () -> Unit = {},
     private var onDestroy: () -> Unit = {},
     private var instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
-    private var destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
+    var destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
     private var shouldSurviveConfigurationChange: Boolean = true
 ) : ReadOnlyProperty<Any?, T?>, LifecycleAwareObservable<T> {
 

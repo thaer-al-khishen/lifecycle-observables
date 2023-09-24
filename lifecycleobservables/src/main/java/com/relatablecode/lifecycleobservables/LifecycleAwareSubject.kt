@@ -1,6 +1,9 @@
 package com.relatablecode.lifecycleobservables
 
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +26,7 @@ class LifecycleAwareSubject<T>(
     instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
     destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
     shouldSurviveConfigurationChange: Boolean = false,
+    private val shouldResetFirstEmission: Boolean = false
 ) : LifecycleAwareObserver<T>(
     initialValue,
     onChange,
@@ -38,6 +42,7 @@ class LifecycleAwareSubject<T>(
 ), ReadWriteProperty<Any?, T?>, LifecycleAwareObservable<T> {
 
     private val mutex = Mutex()
+    private var hasEmitted = false
 
     override fun setInitialValue(_initialValue: () -> T): LifecycleAwareSubject<T> {
         super.setInitialValue(_initialValue)
@@ -104,15 +109,22 @@ class LifecycleAwareSubject<T>(
         updateCondition: UpdateCondition
     ): Boolean {
         return when (updateCondition) {
-            UpdateCondition.UNIQUE -> oldValue != newValue
-            UpdateCondition.FIRST_ONLY -> oldValue == initialValue?.invoke()
-            UpdateCondition.NONE -> true
+            UpdateCondition.UNIQUE -> {
+                oldValue != newValue
+            }
+            UpdateCondition.FIRST_ONLY -> {
+                !hasEmitted
+            }
+            UpdateCondition.NONE -> {
+                true
+            }
         }
     }
 
     private fun asyncUpdate(newValue: T?, updateCondition: UpdateCondition = UpdateCondition.NONE) {
         val oldValue = this.value
         if (shouldUpdate(oldValue, newValue, updateCondition)) {
+            hasEmitted = true
             coroutineScope.launch {
                 mutex.withLock {
                     this@LifecycleAwareSubject.value = newValue
@@ -132,6 +144,7 @@ class LifecycleAwareSubject<T>(
     ) {
         val oldValue = this.value
         if (shouldUpdate(oldValue, newValue, updateCondition)) {
+            hasEmitted = true
             this@LifecycleAwareSubject.value = newValue
             onChange.invoke(oldValue, newValue)
             observers.forEach { it(oldValue, newValue) }
@@ -147,6 +160,35 @@ class LifecycleAwareSubject<T>(
             UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
             UpdateMode.ASYNC -> asyncUpdate(newValue, updateCondition)
         }
+    }
+
+    override fun observe(lifecycle: Lifecycle, observer: (old: T?, new: T?) -> Unit) {
+        super.observe(lifecycle, observer)
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                if (destroyedAt == Lifecycle.Event.ON_DESTROY && shouldResetFirstEmission) {
+                    resetEmission()
+                }
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                if (destroyedAt == Lifecycle.Event.ON_STOP && shouldResetFirstEmission) {
+                    resetEmission()
+                }
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                if (destroyedAt == Lifecycle.Event.ON_PAUSE && shouldResetFirstEmission) {
+                    resetEmission()
+                }
+            }
+
+        })
+    }
+
+    fun resetEmission() {
+        hasEmitted = false
     }
 
 }

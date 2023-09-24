@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
@@ -42,16 +43,43 @@ fun <T> LifecycleAwareObserver<T>.asStateFlow(
     return stateFlow
 }
 
-fun <T> LifecycleAwareObserver<T>.asSharedFlow(
-    lifecycle: Lifecycle,
+context(LifecycleOwner)
+fun <T> LifecycleAwareObserver<T>.asStateFlow(
     updateCondition: UpdateCondition = UpdateCondition.NONE
-): SharedFlow<T?> {
-    val sharedFlow = MutableSharedFlow<T?>()
-    observe(lifecycle) { oldValue, newValue ->
+): StateFlow<T?> {
+    val stateFlow = MutableStateFlow(value)
+    observe(this@LifecycleOwner.lifecycle) { oldValue, newValue ->
         when (updateCondition) {
             UpdateCondition.FIRST_ONLY -> {
                 if (oldValue == initialValue?.invoke()) {
-                    lifecycle.coroutineScope.launch {
+                    stateFlow.value = newValue
+                }
+            }
+
+            UpdateCondition.UNIQUE -> {
+                if (oldValue != newValue) {
+                    stateFlow.value = newValue
+                }
+            }
+
+            UpdateCondition.NONE -> {
+                stateFlow.value = newValue
+            }
+        }
+    }
+    return stateFlow
+}
+
+context(LifecycleOwner)
+fun <T> LifecycleAwareObserver<T>.asSharedFlow(
+    updateCondition: UpdateCondition = UpdateCondition.NONE
+): SharedFlow<T?> {
+    val sharedFlow = MutableSharedFlow<T?>()
+    observe(this@LifecycleOwner.lifecycle) { oldValue, newValue ->
+        when (updateCondition) {
+            UpdateCondition.FIRST_ONLY -> {
+                if (oldValue == initialValue?.invoke()) {
+                    this@LifecycleOwner.lifecycle.coroutineScope.launch {
                         sharedFlow.emit(newValue)
                     }
                 }
@@ -59,14 +87,14 @@ fun <T> LifecycleAwareObserver<T>.asSharedFlow(
 
             UpdateCondition.UNIQUE -> {
                 if (oldValue != newValue) {
-                    lifecycle.coroutineScope.launch {
+                    this@LifecycleOwner.lifecycle.coroutineScope.launch {
                         sharedFlow.emit(newValue)
                     }
                 }
             }
 
             UpdateCondition.NONE -> {
-                lifecycle.coroutineScope.launch {
+                this@LifecycleOwner.lifecycle.coroutineScope.launch {
                     sharedFlow.emit(newValue)
                 }
             }
@@ -75,12 +103,12 @@ fun <T> LifecycleAwareObserver<T>.asSharedFlow(
     return sharedFlow
 }
 
+context(Lifecycle)
 fun <T> LifecycleAwareObserver<T>.asLiveData(
-    lifecycle: Lifecycle,
     updateCondition: UpdateCondition = UpdateCondition.NONE
 ): LiveData<T?> {
     val liveData = MutableLiveData<T?>()
-    observe(lifecycle) { oldValue, newValue ->
+    observe(this@Lifecycle) { oldValue, newValue ->
         when (updateCondition) {
             UpdateCondition.FIRST_ONLY -> {
                 if (oldValue == initialValue?.invoke()) {
