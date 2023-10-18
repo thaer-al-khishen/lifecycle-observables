@@ -1,18 +1,18 @@
 # Lifecycle Observables
 A Kotlin library that provides lifecycle-aware observables for Android, allowing you to safely observe and mutate data in sync with the Android lifecycle.
 
-Features:</br>
-<b>Lifecycle-Aware:</b> Observables that are aware of the Android lifecycle, ensuring safe operations that respect the lifecycle state.</br>
-<b>Concurrency Control:</b> Built-in concurrency mechanisms to ensure data integrity.</br>
-<b>Easy Integration:</b> Seamlessly integrates with Android's ViewModel and Lifecycle components.</br>
+## Features:
+- <b>Lifecycle-Aware:</b> Observables that are aware of the Android lifecycle, ensuring safe operations that respect the lifecycle state.</br>
+- <b>Concurrency Control:</b> Built-in concurrency mechanisms to ensure data integrity.</br>
+- <b>Easy Integration:</b> Seamlessly integrates with Android's ViewModel and Lifecycle components.</br>
 
-<b>Installation:</b></br>
+## Installation:
 
 Add the following dependency to your build.gradle:</br>
 ```groovy
 implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.1.0'
 ```
-Usage:
+## Usage:
 
 ```kotlin
 class MainViewModel: ViewModel() {
@@ -54,5 +54,5 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-License
+## License:
 This project is licensed under the Apache 2.0 License. Check the LICENSE file for details.
