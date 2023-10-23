@@ -5,54 +5,58 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.relatablecode.lifecycleobservables.UpdateCondition
-import com.relatablecode.lifecycleobservables.asSharedFlow
-import com.relatablecode.lifecycleobservables.asStateFlow
-import com.relatablecode.lifecycleobservables.combineLatest
-import com.relatablecode.lifecycleobservables.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    val viewModel: MainViewModel by viewModels()
+
+    var firstUpdateCount = 0
+    var uniqueUpdateCount = 0
+    var normalUpdateCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.btn_invoke).setOnClickListener {
-            viewModel.updateValue()
+        findViewById<TextView>(R.id.tv_target_single).text = "Single Count ${viewModel.oneTimeEvent.value.toString()}"
+        findViewById<TextView>(R.id.tv_target_unique).text = "Unique Count ${viewModel.uniqueUpdateEvent.value.toString()}"
+        findViewById<TextView>(R.id.tv_target_normal).text = "Normal Count ${viewModel.normalUpdateEvent.value.toString()}"
+
+        findViewById<Button>(R.id.btn_invoke_single_update_observer).setOnClickListener {
+            viewModel.updateOneTimeEvent()
+        }
+
+        findViewById<Button>(R.id.btn_invoke_unique_update_observer).setOnClickListener {
+            viewModel.updateUniqueEvent()
+        }
+
+        findViewById<Button>(R.id.btn_invoke_normal_update_data).setOnClickListener {
+            viewModel.updateNormalEvent()
         }
 
         findViewById<Button>(R.id.btn_invoke_navigation).setOnClickListener {
             startActivity(Intent(this, DestinationActivity::class.java))
         }
 
-        lifecycleScope.launch {
-            viewModel.selectedCurrency.asStateFlow(updateCondition = UpdateCondition.FIRST_ONLY)
-                .collect {
-                    Log.d("ThaerOutput SharedFlow", it.toString())
-                }
+        viewModel.oneTimeEvent.observe(lifecycle) { old, new ->
+            Log.d("ThaerOutput oneTimeEvent", new.toString())
+            firstUpdateCount++
+            findViewById<TextView>(R.id.tv_target_single).text = "Single Count $firstUpdateCount"
         }
 
-        viewModel.themeObserver.distinctUntilChanged().observe(lifecycle) { old, new ->
-            Log.d("ThemeChange", "Theme changed from $old to $new")
+        viewModel.uniqueUpdateEvent.observe(lifecycle) { old, new ->
+            Log.d("ThaerOutput uniqueUpdateEvent", new.toString())
+            uniqueUpdateCount++
+            findViewById<TextView>(R.id.tv_target_unique).text = "Unique Count $uniqueUpdateCount"
         }
 
-        viewModel.themeObserver.update("Lights")
-        viewModel.themeObserver.update("Dark")
-        viewModel.themeObserver.update("Dark")
-
-        combineLatest(viewModel.currencyObserver, viewModel.languageObserver) { currency, language ->
-            "Selected currency is $currency and language is $language"
-        }.observe(lifecycle) { _, combinedMessage ->
-            Log.d("CombinedSelection", combinedMessage.toString())
+        viewModel.normalUpdateEvent.observe(lifecycle) { old, new ->
+            Log.d("ThaerOutput normalUpdateEvent", new.toString())
+            normalUpdateCount++
+            findViewById<TextView>(R.id.tv_target_normal).text = "Normal Count $normalUpdateCount"
         }
-
-        viewModel.currencyObserver.update("EUR")
-        viewModel.languageObserver.update("French")
 
     }
 

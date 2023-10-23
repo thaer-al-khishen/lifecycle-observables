@@ -43,12 +43,12 @@ class ComposeActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: MainViewModel) {
 
-    val viewModelValue = viewModel.selectedCurrency.collectAsStateWithLifecycle(updateCondition = UpdateCondition.FIRST_ONLY)
+    val viewModelValue = viewModel.normalUpdateEvent.collectAsStateWithLifecycle(updateCondition = UpdateCondition.FIRST_ONLY)
 
     Text(
         text = "Hello ${viewModelValue.value}!",
         modifier = modifier.clickable {
-            viewModel.updateValue()
+            viewModel.updateNormalEvent()
         }
     )
 }

@@ -13,10 +13,25 @@
         android:theme="@style/Theme.LifecycleObservableApplication"
         tools:targetApi="31">
         <activity
-            android:name=".DestinationActivity"
+            android:name=".NoneUpdateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UniqueUpdateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NavigationRootActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DestinationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConfigChangeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OneTimeEventActivitySurvivingBackPress"
             android:exported="true"
             android:label="@string/title_activity_compose"
             android:theme="@style/Theme.LifecycleObservableApplication">
@@ -25,10 +40,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- <activity -->
+        <!-- android:name=".ConfigChangeActivity" -->
+        <!-- android:exported="false" /> -->
+        <!-- <activity -->
+        <!-- android:name=".MainActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".ComposeActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ConfigChangeActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_target_config_change_surviving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tv_target_config_change_not_surviving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tv_target_config_change_surviving_with_multiple_emissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tv_target_config_change_not_surviving_with_multiple_emissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btn_invoke_config_change_observer_surviving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invoke config change survive" />
+
+            <Button
+                android:id="@+id/btn_invoke_config_change_observer_not_surviving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invoke config change not surviving" />
+
+            <Button
+                android:id="@+id/btn_invoke_config_change_observer_surviving_with_multiple_emissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invoke config change survive with multiple emissoins" />
+
+            <Button
+                android:id="@+id/btn_invoke_config_change_observer_doesnt_survive_with_multiple_emissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invoke config change doesnt survive with multiple emissoins" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

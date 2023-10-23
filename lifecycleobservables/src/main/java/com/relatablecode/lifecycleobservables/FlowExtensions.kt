@@ -28,13 +28,16 @@ fun <T> LifecycleAwareObserver<T>.asStateFlow(
                     stateFlow.value = newValue
                 }
             }
-
+            UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
+                if (oldValue == initialValue?.invoke() && newValue != null) {
+                    stateFlow.value = newValue
+                }
+            }
             UpdateCondition.UNIQUE -> {
                 if (oldValue != newValue) {
                     stateFlow.value = newValue
                 }
             }
-
             UpdateCondition.NONE -> {
                 stateFlow.value = newValue
             }
@@ -55,13 +58,16 @@ fun <T> LifecycleAwareObserver<T>.asStateFlow(
                     stateFlow.value = newValue
                 }
             }
-
+            UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
+                if (oldValue == initialValue?.invoke() && newValue != null) {
+                    stateFlow.value = newValue
+                }
+            }
             UpdateCondition.UNIQUE -> {
                 if (oldValue != newValue) {
                     stateFlow.value = newValue
                 }
             }
-
             UpdateCondition.NONE -> {
                 stateFlow.value = newValue
             }
@@ -84,7 +90,13 @@ fun <T> LifecycleAwareObserver<T>.asSharedFlow(
                     }
                 }
             }
-
+            UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
+                if (oldValue == initialValue?.invoke() && newValue != null) {
+                    this@LifecycleOwner.lifecycle.coroutineScope.launch {
+                        sharedFlow.emit(newValue)
+                    }
+                }
+            }
             UpdateCondition.UNIQUE -> {
                 if (oldValue != newValue) {
                     this@LifecycleOwner.lifecycle.coroutineScope.launch {
@@ -103,19 +115,23 @@ fun <T> LifecycleAwareObserver<T>.asSharedFlow(
     return sharedFlow
 }
 
-context(Lifecycle)
+context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.asLiveData(
     updateCondition: UpdateCondition = UpdateCondition.NONE
 ): LiveData<T?> {
     val liveData = MutableLiveData<T?>()
-    observe(this@Lifecycle) { oldValue, newValue ->
+    observe(this@LifecycleOwner.lifecycle) { oldValue, newValue ->
         when (updateCondition) {
             UpdateCondition.FIRST_ONLY -> {
                 if (oldValue == initialValue?.invoke()) {
                     liveData.value = newValue
                 }
             }
-
+            UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
+                if (oldValue == initialValue?.invoke() && newValue != null) {
+                    liveData.value = newValue
+                }
+            }
             UpdateCondition.UNIQUE -> {
                 if (oldValue != newValue) {
                     liveData.value = newValue

@@ -38,7 +38,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion '1.5.1'
     }
     packagingOptions {
         resources {
@@ -72,11 +72,35 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // Espresso dependencies
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-accessibility:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-web:3.5.1"
+    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:3.5.1"
+
+    // Espresso dependencies
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-accessibility:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-web:3.5.1"
+    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:3.5.1"
+    implementation "androidx.test.espresso:espresso-idling-resource:3.5.1"
+
+    //Nav component
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-testing:$nav_version"
+
+    def fragment_version = "1.6.1"
+    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 
 }

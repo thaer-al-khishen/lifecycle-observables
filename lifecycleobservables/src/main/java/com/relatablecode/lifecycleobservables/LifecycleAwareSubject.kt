@@ -13,16 +13,24 @@ import kotlinx.coroutines.withContext
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Represents a lifecycle-aware subject, extending [LifecycleAwareObserver], designed to emit values and
+ * handle those emissions in relation to the Android lifecycle. It provides the functionality of both
+ * reading and writing values with lifecycle awareness.
+ *
+ * The subject can be updated either synchronously, asynchronously, or without locking. Care should
+ * be taken when choosing an update method, especially in concurrent environments.
+ *
+ * @property coroutineScope Provides the scope in which asynchronous operations, like updating the subject, are launched.
+ * @property shouldResetFirstEmission If true, resets the emission state upon certain lifecycle events, allowing the value to be emitted again.
+ *
+ * @constructor Creates a lifecycle-aware subject initialized with given parameters.
+ */
 class LifecycleAwareSubject<T>(
     private val coroutineScope: CoroutineScope,
     initialValue: (() -> T)? = null,
     onChange: (old: T?, new: T?) -> Unit = { _, _ -> },
-    onCreate: () -> Unit = {},
-    onStart: () -> Unit = {},
-    onResume: () -> Unit = {},
-    onPause: () -> Unit = {},
-    onStop: () -> Unit = {},
-    onDestroy: () -> Unit = {},
+    callbacks: LifecycleEventCallbacks = LifecycleEventCallbacks(),
     instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
     destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
     shouldSurviveConfigurationChange: Boolean = false,
@@ -30,79 +38,37 @@ class LifecycleAwareSubject<T>(
 ) : LifecycleAwareObserver<T>(
     initialValue,
     onChange,
-    onCreate,
-    onStart,
-    onResume,
-    onPause,
-    onStop,
-    onDestroy,
+    callbacks,
     instantiatedAt,
     destroyedAt,
     shouldSurviveConfigurationChange
 ), ReadWriteProperty<Any?, T?>, LifecycleAwareObservable<T> {
 
+    /**
+     * A mutual exclusion primitive that protects updates to the subject's value in asynchronous environments.
+     */
     private val mutex = Mutex()
+
+    /**
+     * A flag to check if the subject has already emitted a value.
+     */
     private var hasEmitted = false
 
-    override fun setInitialValue(_initialValue: () -> T): LifecycleAwareSubject<T> {
-        super.setInitialValue(_initialValue)
-        return this
-    }
-
-    override fun setOnChange(_onChange: (old: T?, new: T?) -> Unit): LifecycleAwareSubject<T> {
-        super.setOnChange(_onChange)
-        return this
-    }
-
-    override fun setOnCreate(_onCreate: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnCreate(_onCreate)
-        return this
-    }
-
-    override fun setOnStart(_onStart: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnStart(_onStart)
-        return this
-    }
-
-    override fun setOnResume(_onResume: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnResume(_onResume)
-        return this
-    }
-
-    override fun setOnPause(_onPause: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnPause(_onPause)
-        return this
-    }
-
-    override fun setOnStop(_onStop: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnStop(_onStop)
-        return this
-    }
-
-    override fun setOnDestroy(_onDestroy: () -> Unit): LifecycleAwareSubject<T> {
-        super.setOnDestroy(_onDestroy)
-        return this
-    }
-
-    override fun setInstantiatedAt(_instantiatedAt: Lifecycle.Event): LifecycleAwareSubject<T> {
-        super.setInstantiatedAt(_instantiatedAt)
-        return this
-    }
-
-    override fun setDestroyedAt(_destroyedAt: Lifecycle.Event): LifecycleAwareSubject<T> {
-        super.setDestroyedAt(_destroyedAt)
-        return this
-    }
-
-    override fun setShouldSurviveConfigurationChange(_shouldSurviveConfigurationChange: Boolean): LifecycleAwareSubject<T> {
-        super.setShouldSurviveConfigurationChange(_shouldSurviveConfigurationChange)
-        return this
-    }
-
+    /**
+     * Sets the value of the subject, automatically triggering an asynchronous update by default.
+     */
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
         asyncUpdate(value)
     }
 
+    /**
+     * Determines if an update to the subject should take place based on the provided conditions.
+     *
+     * @param oldValue The current value of the subject.
+     * @param newValue The new value to be set.
+     * @param updateCondition The condition that dictates when updates should occur.
+     * @return Boolean indicating if the subject should be updated.
+     */
     private fun shouldUpdate(
         oldValue: T?,
         newValue: T?,
@@ -115,12 +81,21 @@ class LifecycleAwareSubject<T>(
             UpdateCondition.FIRST_ONLY -> {
                 !hasEmitted
             }
+            UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
+                !hasEmitted && newValue != null
+            }
             UpdateCondition.NONE -> {
                 true
             }
         }
     }
 
+    /**
+     * Updates the value of the subject asynchronously, ensuring synchronization to avoid concurrent modifications.
+     *
+     * @param newValue The new value to set.
+     * @param updateCondition The condition under which the update should occur.
+     */
     private fun asyncUpdate(newValue: T?, updateCondition: UpdateCondition = UpdateCondition.NONE) {
         val oldValue = this.value
         if (shouldUpdate(oldValue, newValue, updateCondition)) {
@@ -137,6 +112,12 @@ class LifecycleAwareSubject<T>(
         }
     }
 
+    /**
+     * Updates the value of the subject synchronously.
+     *
+     * @param newValue The new value to set.
+     * @param updateCondition The condition under which the update should occur.
+     */
     @Synchronized
     private fun synchronizedUpdate(
         newValue: T?,
@@ -151,6 +132,31 @@ class LifecycleAwareSubject<T>(
         }
     }
 
+    /**
+     * Updates the value of the subject without any locking mechanism.
+     *
+     * @param newValue The new value to set.
+     * @param updateCondition The condition under which the update should occur.
+     *
+     * @warning This method does not ensure atomicity and data consistency in concurrent environments.
+     */
+    fun nonLockingUpdate(newValue: T?, updateCondition: UpdateCondition = UpdateCondition.NONE) {
+        val oldValue = this.value
+        if (shouldUpdate(oldValue, newValue, updateCondition)) {
+            hasEmitted = true
+            this@LifecycleAwareSubject.value = newValue
+            onChange.invoke(oldValue, newValue)
+            observers.forEach { it(oldValue, newValue) }
+        }
+    }
+
+    /**
+     * Provides a way to update the subject value using various modes.
+     *
+     * @param newValue The new value to set.
+     * @param updateMode The mode (SYNC, ASYNC, NON_LOCKING) in which the update should occur.
+     * @param updateCondition The condition under which the update should occur.
+     */
     fun update(
         newValue: T?,
         updateMode: UpdateMode = UpdateMode.ASYNC,
@@ -159,9 +165,17 @@ class LifecycleAwareSubject<T>(
         when (updateMode) {
             UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
             UpdateMode.ASYNC -> asyncUpdate(newValue, updateCondition)
+            UpdateMode.NON_LOCKING -> nonLockingUpdate(newValue, updateCondition)
         }
     }
 
+    /**
+     * Overrides the observe function from [LifecycleAwareObserver]. In addition to the base functionality,
+     * it checks if the emission should be reset upon reaching certain lifecycle events.
+     *
+     * @param lifecycle The lifecycle to observe.
+     * @param observer The callback triggered on value changes.
+     */
     override fun observe(lifecycle: Lifecycle, observer: (old: T?, new: T?) -> Unit) {
         super.observe(lifecycle, observer)
         lifecycle.addObserver(object : DefaultLifecycleObserver {
@@ -187,6 +201,9 @@ class LifecycleAwareSubject<T>(
         })
     }
 
+    /**
+     * Resets the emission state of the subject, allowing a value to be emitted again.
+     */
     fun resetEmission() {
         hasEmitted = false
     }

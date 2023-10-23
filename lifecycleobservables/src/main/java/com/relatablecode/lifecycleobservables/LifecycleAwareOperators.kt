@@ -3,6 +3,12 @@ package com.relatablecode.lifecycleobservables
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
 
+/**
+ * Transforms the values emitted by the [LifecycleAwareObserver] using the given transformation function.
+ *
+ * @param transform The transformation function to apply to each value emitted by the source observer.
+ * @return A new [LifecycleAwareObserver] which emits the transformed values.
+ */
 context(LifecycleOwner)
 fun <T, R> LifecycleAwareObserver<T>.map(transform: (T?) -> R): LifecycleAwareObserver<R> {
     val newSubject = LifecycleAwareSubject<R>(this@LifecycleOwner.lifecycle.coroutineScope)
@@ -12,6 +18,13 @@ fun <T, R> LifecycleAwareObserver<T>.map(transform: (T?) -> R): LifecycleAwareOb
     return newSubject
 }
 
+/**
+ * Transforms the values emitted by the [LifecycleAwareObserver] into new [LifecycleAwareObserver]s
+ * and merges their emissions into the returned observer.
+ *
+ * @param transform The transformation function to apply to each value emitted by the source observer.
+ * @return A new [LifecycleAwareObserver] which emits the combined values.
+ */
 context(LifecycleOwner)
 fun <T, R> LifecycleAwareObserver<T>.flatMap(transform: (T?) -> LifecycleAwareObserver<R>): LifecycleAwareObserver<R> {
     val newSubject = LifecycleAwareSubject<R>(this@LifecycleOwner.lifecycle.coroutineScope)
@@ -24,6 +37,12 @@ fun <T, R> LifecycleAwareObserver<T>.flatMap(transform: (T?) -> LifecycleAwareOb
     return newSubject
 }
 
+/**
+ * Filters the values emitted by the [LifecycleAwareObserver] using the provided predicate function.
+ *
+ * @param predicate The predicate function to test each emitted value.
+ * @return A new [LifecycleAwareObserver] which emits values that pass the predicate test.
+ */
 context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.filter(predicate: (T?) -> Boolean): LifecycleAwareObserver<T> {
     val newSubject = LifecycleAwareSubject<T>(this@LifecycleOwner.lifecycle.coroutineScope)
@@ -35,6 +54,11 @@ fun <T> LifecycleAwareObserver<T>.filter(predicate: (T?) -> Boolean): LifecycleA
     return newSubject
 }
 
+/**
+ * Ensures that the [LifecycleAwareObserver] does not emit consecutive duplicate values.
+ *
+ * @return A new [LifecycleAwareObserver] which emits distinct consecutive values.
+ */
 context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.distinctUntilChanged(): LifecycleAwareObserver<T> {
     val newSubject = LifecycleAwareSubject<T>(this@LifecycleOwner.lifecycle.coroutineScope).apply {
@@ -51,6 +75,14 @@ fun <T> LifecycleAwareObserver<T>.distinctUntilChanged(): LifecycleAwareObserver
     return newSubject
 }
 
+/**
+ * Combines the latest emissions of two [LifecycleAwareObserver]s using the provided combining function.
+ *
+ * @param source1 The first source observer.
+ * @param source2 The second source observer.
+ * @param combineFunction The function used to combine the latest values from both source observers.
+ * @return A new [LifecycleAwareObserver] which emits the combined values.
+ */
 context(LifecycleOwner)
 fun <T1, T2, R> combineLatest(
     source1: LifecycleAwareObserver<T1>,
