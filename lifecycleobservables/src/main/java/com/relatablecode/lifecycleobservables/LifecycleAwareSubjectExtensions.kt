@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
 /**
- * Creates a [LifecycleAwareSubject] attached to a ViewModel's lifecycle.
+ * Creates a [LifecycleAwareSubject] attached to a Activity's lifecycle.
  *
- * @return A [LifecycleAwareSubject] associated with the ViewModel's lifecycle.
+ * @return A [LifecycleAwareSubject] associated with the Activity's lifecycle.
  */
 fun <T> ViewModel.lifecycleAwareSubject(
     initialValue: (() -> T)? = null,
@@ -29,9 +29,9 @@ fun <T> ViewModel.lifecycleAwareSubject(
 }
 
 /**
- * Creates a [LifecycleAwareSubject] that is aware of the ViewModel's `ON_CREATE` and `ON_DESTROY` lifecycle events.
+ * Creates a [LifecycleAwareSubject] that is aware of the Activity's `ON_CREATE` and `ON_DESTROY` lifecycle events.
  *
- * @return A [LifecycleAwareSubject] associated with the ViewModel's lifecycle, starting at the `ON_CREATE` event and destroyed at the `ON_DESTROY` event.
+ * @return A [LifecycleAwareSubject] associated with the Activity's lifecycle, starting at the `ON_CREATE` event and destroyed at the `ON_DESTROY` event.
  */
 fun <T> ViewModel.lifecycleAwareSubjectWhenCreated(
     initialValue: (() -> T)? = null,
@@ -51,9 +51,9 @@ fun <T> ViewModel.lifecycleAwareSubjectWhenCreated(
 }
 
 /**
- * Creates a [LifecycleAwareSubject] that is aware of the ViewModel's `ON_START` and `ON_STOP` lifecycle events.
+ * Creates a [LifecycleAwareSubject] that is aware of the Activity's `ON_START` and `ON_STOP` lifecycle events.
  *
- * @return A [LifecycleAwareSubject] associated with the ViewModel's lifecycle, starting at the `ON_START` event and destroyed at the `ON_STOP` event.
+ * @return A [LifecycleAwareSubject] associated with the Activity's lifecycle, starting at the `ON_START` event and destroyed at the `ON_STOP` event.
  */
 fun <T> ViewModel.lifecycleAwareSubjectWhenStarted(
     initialValue: (() -> T)? = null,
@@ -73,9 +73,9 @@ fun <T> ViewModel.lifecycleAwareSubjectWhenStarted(
 }
 
 /**
- * Creates a [LifecycleAwareSubject] that is aware of the ViewModel's `ON_RESUME` and `ON_PAUSE` lifecycle events.
+ * Creates a [LifecycleAwareSubject] that is aware of the Activity's `ON_RESUME` and `ON_PAUSE` lifecycle events.
  *
- * @return A [LifecycleAwareSubject] associated with the ViewModel's lifecycle, starting at the `ON_RESUME` event and destroyed at the `ON_PAUSE` event.
+ * @return A [LifecycleAwareSubject] associated with the Activity's lifecycle, starting at the `ON_RESUME` event and destroyed at the `ON_PAUSE` event.
  */
 fun <T> ViewModel.lifecycleAwareSubjectWhenResumed(
     initialValue: (() -> T)? = null,

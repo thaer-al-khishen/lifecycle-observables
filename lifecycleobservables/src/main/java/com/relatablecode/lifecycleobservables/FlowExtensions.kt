@@ -16,6 +16,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Converts a [LifecycleAwareObserver] to a [StateFlow].
+ *
+ * @param lifecycle The lifecycle the observer should be bound to.
+ * @param updateCondition Specifies the condition under which updates should be propagated.
+ * @return A state flow representation of the lifecycle-aware observer.
+ */
 fun <T> LifecycleAwareObserver<T>.asStateFlow(
     lifecycle: Lifecycle,
     updateCondition: UpdateCondition = UpdateCondition.NONE
@@ -46,6 +53,12 @@ fun <T> LifecycleAwareObserver<T>.asStateFlow(
     return stateFlow
 }
 
+/**
+ * Converts a [LifecycleAwareObserver] to a [StateFlow], using the provided [LifecycleOwner]'s lifecycle.
+ *
+ * @param updateCondition Specifies the condition under which updates should be propagated.
+ * @return A state flow representation of the lifecycle-aware observer.
+ */
 context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.asStateFlow(
     updateCondition: UpdateCondition = UpdateCondition.NONE
@@ -76,6 +89,12 @@ fun <T> LifecycleAwareObserver<T>.asStateFlow(
     return stateFlow
 }
 
+/**
+ * Converts a [LifecycleAwareObserver] to a [SharedFlow], using the provided [LifecycleOwner]'s lifecycle.
+ *
+ * @param updateCondition Specifies the condition under which updates should be propagated.
+ * @return A shared flow representation of the lifecycle-aware observer.
+ */
 context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.asSharedFlow(
     updateCondition: UpdateCondition = UpdateCondition.NONE
@@ -115,6 +134,12 @@ fun <T> LifecycleAwareObserver<T>.asSharedFlow(
     return sharedFlow
 }
 
+/**
+ * Converts a [LifecycleAwareObserver] to a [LiveData], using the provided [LifecycleOwner]'s lifecycle.
+ *
+ * @param updateCondition Specifies the condition under which updates should be propagated.
+ * @return A live data representation of the lifecycle-aware observer.
+ */
 context(LifecycleOwner)
 fun <T> LifecycleAwareObserver<T>.asLiveData(
     updateCondition: UpdateCondition = UpdateCondition.NONE
