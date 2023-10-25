@@ -12,8 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.lifecycleobservableapplication.ui.theme.LifecycleObservableApplicationTheme
-import com.relatablecode.lifecycleobservables.UpdateCondition
-import com.relatablecode.lifecycleobservables.collectAsStateWithLifecycle
+import com.relatablecode.lifecycleobservables_core.UpdateCondition
+import com.relatablecode.lifecycleobservables_extensions.collectAsStateWithLifecycle
 
 class ComposeActivity : ComponentActivity() {
 

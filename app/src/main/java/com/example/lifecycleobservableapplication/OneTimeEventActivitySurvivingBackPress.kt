@@ -7,9 +7,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.relatablecode.lifecycleobservables.asLiveData
-import com.relatablecode.lifecycleobservables.asSharedFlow
-import com.relatablecode.lifecycleobservables.asStateFlow
+import com.relatablecode.lifecycleobservables_extensions.asLiveData
 import kotlinx.coroutines.launch
 
 class OneTimeEventActivitySurvivingBackPress : AppCompatActivity() {

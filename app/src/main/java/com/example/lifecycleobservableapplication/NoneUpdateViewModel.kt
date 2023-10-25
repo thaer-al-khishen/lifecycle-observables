@@ -2,9 +2,9 @@ package com.example.lifecycleobservableapplication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.relatablecode.lifecycleobservables.LifecycleAwareObserver
-import com.relatablecode.lifecycleobservables.LifecycleAwareSubject
-import com.relatablecode.lifecycleobservables.UpdateCondition
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareObserver
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareSubject
+import com.relatablecode.lifecycleobservables_core.UpdateCondition
 import kotlinx.coroutines.launch
 
 class NoneUpdateViewModel : ViewModel() {
