@@ -1,4 +1,5 @@
-package com.relatablecode.lifecycleobservables
+package com.relatablecode.lifecycleobservables_extensions
+
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -10,6 +11,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareObserver
+import com.relatablecode.lifecycleobservables_core.UpdateCondition
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

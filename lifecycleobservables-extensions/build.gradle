@@ -7,12 +7,11 @@ plugins {
 apply from: '../shared-dependencies.gradle'
 
 android {
-    namespace 'com.relatablecode.lifecycleobservables'
+    namespace 'com.relatablecode.lifecycleobservables_extensions'
     compileSdk 34
 
     defaultConfig {
         minSdk 24
-        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -38,14 +37,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.1'
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
 }
 
 dependencies {
+
+    implementation(project(':lifecycleobservables-core'))
 
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
@@ -62,7 +58,7 @@ publishing {
     publications {
         release(MavenPublication) {
             groupId 'com.relatablecode'
-            artifactId 'lifecycleobservables'
+            artifactId 'lifecycleobservables-exntensions'
             version = '1.2.0-beta06'
 
             afterEvaluate {

@@ -17,3 +17,5 @@ dependencyResolutionManagement {
 rootProject.name = "Lifecycle Observable Application"
 include ':app'
 include ':lifecycleobservables'
+include ':lifecycleobservables-core'
+include ':lifecycleobservables-extensions'

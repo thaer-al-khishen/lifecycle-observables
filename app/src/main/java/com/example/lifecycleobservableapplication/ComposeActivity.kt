@@ -10,14 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.lifecycleobservableapplication.ui.theme.LifecycleObservableApplicationTheme
 import com.relatablecode.lifecycleobservables.UpdateCondition
-import com.relatablecode.lifecycleobservables.asStateFlow
 import com.relatablecode.lifecycleobservables.collectAsStateWithLifecycle
 
 class ComposeActivity : ComponentActivity() {

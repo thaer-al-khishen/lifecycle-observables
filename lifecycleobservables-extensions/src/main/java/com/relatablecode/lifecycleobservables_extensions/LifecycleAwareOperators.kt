@@ -1,8 +1,10 @@
-package com.relatablecode.lifecycleobservables
+package com.relatablecode.lifecycleobservables_extensions
 
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareObserver
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareSubject
 
 /**
  * Transforms the values emitted by the [LifecycleAwareObserver] using the given transformation function.

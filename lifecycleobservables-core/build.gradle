@@ -7,13 +7,11 @@ plugins {
 apply from: '../shared-dependencies.gradle'
 
 android {
-    namespace 'com.relatablecode.lifecycleobservables'
+    namespace 'com.relatablecode.lifecycleobservables_core'
     compileSdk 34
 
     defaultConfig {
         minSdk 24
-        targetSdk 34
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -24,45 +22,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures { // Enables Jetpack Compose for this module
-        compose = true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '11'
-        freeCompilerArgs += ["-Xcontext-receivers"]
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.1'
-    }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
     }
 }
 
-dependencies {
-
-    //Lifecycle
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
-
-    //Compose
-    implementation "androidx.compose.ui:ui:1.5.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
-
-}
+dependencies {}
 
 publishing {
     publications {
         release(MavenPublication) {
             groupId 'com.relatablecode'
-            artifactId 'lifecycleobservables'
+            artifactId 'lifecycleobservables-core'
             version = '1.2.0-beta06'
 
             afterEvaluate {

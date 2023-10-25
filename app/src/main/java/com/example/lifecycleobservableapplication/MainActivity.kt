@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.updateNormalEvent()
         }
 
-        findViewById<Button>(R.id.btn_invoke_navigation).setOnClickListener {
+        findViewById<Button>(R.id.btn_navigate).setOnClickListener {
             startActivity(Intent(this, DestinationActivity::class.java))
         }
 

@@ -53,11 +53,11 @@
             android:text="Invoke normal update data" />
 
         <Button
-            android:id="@+id/btn_invoke_navigation"
+            android:id="@+id/btn_navigate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Invoke normal update data" />
+            android:text="Navigate" />
 
     </LinearLayout>
 

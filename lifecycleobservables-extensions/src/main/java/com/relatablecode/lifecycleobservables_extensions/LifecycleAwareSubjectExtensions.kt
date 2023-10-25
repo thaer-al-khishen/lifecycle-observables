@@ -1,9 +1,11 @@
-package com.relatablecode.lifecycleobservables
+package com.relatablecode.lifecycleobservables_extensions
 
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.relatablecode.lifecycleobservables_core.LifecycleAwareSubject
+import com.relatablecode.lifecycleobservables_core.LifecycleEventCallbacks
 
 /**
  * Creates a [LifecycleAwareSubject] attached to a Activity's lifecycle.

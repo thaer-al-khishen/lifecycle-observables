@@ -1,4 +1,4 @@
-package com.relatablecode.lifecycleobservables
+package com.relatablecode.lifecycleobservables_core
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
