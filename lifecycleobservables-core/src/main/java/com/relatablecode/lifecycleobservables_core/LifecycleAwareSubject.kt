@@ -30,10 +30,10 @@ class LifecycleAwareSubject<T>(
     initialValue: (() -> T)? = null,
     onChange: (old: T?, new: T?) -> Unit = { _, _ -> },
     callbacks: LifecycleEventCallbacks = LifecycleEventCallbacks(),
-    instantiatedAt: Lifecycle.Event = Lifecycle.Event.ON_START,
-    destroyedAt: Lifecycle.Event = Lifecycle.Event.ON_STOP,
-    shouldSurviveConfigurationChange: Boolean = false,
-    private val shouldResetFirstEmission: Boolean = false
+    instantiatedAt: Lifecycle.Event = LifecycleAwareHelper.defaultInstantiatedAt,
+    destroyedAt: Lifecycle.Event = LifecycleAwareHelper.defaultDestroyedAt,
+    shouldSurviveConfigurationChange: Boolean = LifecycleAwareHelper.defaultShouldSurviveConfigurationChange,
+    private val shouldResetFirstEmission: Boolean = LifecycleAwareHelper.defaultShouldResetFirstEmission
 ) : LifecycleAwareObserver<T>(
     initialValue,
     onChange,
@@ -52,6 +52,11 @@ class LifecycleAwareSubject<T>(
      * A flag to check if the subject has already emitted a value.
      */
     private var hasEmitted = false
+
+    /**
+     * A handler to manage exceptions that might arise during value updates.
+     */
+    private var errorHandler: ((Exception) -> Unit)? = null
 
     /**
      * Sets the value of the subject, automatically triggering an asynchronous update by default.
@@ -77,12 +82,15 @@ class LifecycleAwareSubject<T>(
             UpdateCondition.UNIQUE -> {
                 oldValue != newValue
             }
+
             UpdateCondition.FIRST_ONLY -> {
                 !hasEmitted
             }
+
             UpdateCondition.FIRST_ONLY_AND_NOT_NULL -> {
                 !hasEmitted && newValue != null
             }
+
             UpdateCondition.NONE -> {
                 true
             }
@@ -160,12 +168,21 @@ class LifecycleAwareSubject<T>(
         newValue: T?,
         updateMode: UpdateMode = UpdateMode.ASYNC,
         updateCondition: UpdateCondition = UpdateCondition.NONE
-    ) {
-        when (updateMode) {
-            UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
-            UpdateMode.ASYNC -> asyncUpdate(newValue, updateCondition)
-            UpdateMode.NON_LOCKING -> nonLockingUpdate(newValue, updateCondition)
+    ): LifecycleAwareSubject<T> {
+        try {
+            when (updateMode) {
+                UpdateMode.SYNC -> synchronizedUpdate(newValue, updateCondition)
+                UpdateMode.ASYNC -> asyncUpdate(newValue, updateCondition)
+                UpdateMode.NON_LOCKING -> nonLockingUpdate(newValue, updateCondition)
+            }
+        } catch (e: Exception) {
+            errorHandler?.invoke(e)
         }
+        return this
+    }
+
+    fun onError(handler: (Exception) -> Unit) {
+        errorHandler = handler
     }
 
     /**

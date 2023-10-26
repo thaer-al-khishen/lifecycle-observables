@@ -33,7 +33,6 @@ class MainViewModel: ViewModel() {
     fun updateOneTimeEvent() {
         viewModelScope.launch {
             EspressoIdlingResource.increment()
-            delay(1000)
             _oneTimeEvent.update(oneTimeEvent.value?.plus(1), updateCondition = UpdateCondition.FIRST_ONLY)
             EspressoIdlingResource.decrement()
         }
