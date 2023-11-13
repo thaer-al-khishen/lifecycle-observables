@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
+import com.relatablecode.lifecycleobservables_broadcast.LifecycleAwareBroadcaster
 
 class OneTimeEventFragment : Fragment() {
 
@@ -62,6 +62,10 @@ class OneTimeEventFragment : Fragment() {
 
         viewModel.oneTimeEventNotSurvivingConfigChangeMultipleEmissions.observe(lifecycle) { old, new ->
             view.findViewById<android.widget.TextView>(R.id.tv_target_config_change_not_surviving_with_multiple_emissions).text = "Config Change Count ${new.toString()}"
+        }
+
+        LifecycleAwareBroadcaster.getInstance<AppEvent>().subscribeToEvent(this) { old, new ->
+            android.util.Log.d("LifecycleAwareBroadcaster", "Received event: ${new.toString()}")
         }
 
     }

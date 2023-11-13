@@ -59,7 +59,7 @@ publishing {
         release(MavenPublication) {
             groupId 'com.relatablecode'
             artifactId 'lifecycleobservables-exntensions'
-            version = '1.2.0-beta07'
+            version = '1.2.0-beta08'
 
             afterEvaluate {
                 from components.release

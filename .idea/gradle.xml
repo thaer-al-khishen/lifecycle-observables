@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/lifecycleobservables" />
+            <option value="$PROJECT_DIR$/lifecycleobservables-broadcast" />
             <option value="$PROJECT_DIR$/lifecycleobservables-core" />
             <option value="$PROJECT_DIR$/lifecycleobservables-extensions" />
           </set>

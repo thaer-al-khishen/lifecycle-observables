@@ -4,14 +4,16 @@ plugins {
     id 'maven-publish'
 }
 
+
 apply from: '../shared-dependencies.gradle'
 
 android {
-    namespace 'com.relatablecode.lifecycleobservables_core'
-    compileSdk 34
+    namespace 'com.relatablecode.lifecycleobservables_broadcast'
+    compileSdk 33
 
     defaultConfig {
         minSdk 24
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -23,21 +25,25 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '1.8'
     }
 }
 
-dependencies {}
+dependencies {
+
+    implementation project(path: ':lifecycleobservables-core')
+
+}
 
 publishing {
     publications {
         release(MavenPublication) {
             groupId 'com.relatablecode'
-            artifactId 'lifecycleobservables-core'
+            artifactId 'lifecycleobservables-broadcast'
             version = '1.2.0-beta08'
 
             afterEvaluate {

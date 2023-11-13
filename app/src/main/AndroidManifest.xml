@@ -19,7 +19,7 @@
             android:name=".UniqueUpdateActivity"
             android:exported="false" />
         <activity
-            android:name=".NavigationRootActivity"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".OneTimeEventActivitySurvivingBackPress"
@@ -31,7 +31,7 @@
             android:name=".ConfigChangeActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".NavigationRootActivity"
             android:exported="true"
             android:label="@string/title_activity_compose"
             android:theme="@style/Theme.LifecycleObservableApplication">

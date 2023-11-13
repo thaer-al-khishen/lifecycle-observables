@@ -48,6 +48,7 @@ android {
 dependencies {
     api project(path: ':lifecycleobservables-core')
     api project(path: ':lifecycleobservables-extensions')
+    api project(path: ':lifecycleobservables-broadcast')
 }
 
 publishing {
@@ -55,7 +56,7 @@ publishing {
         release(MavenPublication) {
             groupId 'com.relatablecode'
             artifactId 'lifecycleobservables'
-            version = '1.2.0-beta06'
+            version = '1.2.0-beta08'
 
             afterEvaluate {
                 from components.release
