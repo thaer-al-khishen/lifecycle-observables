@@ -7,10 +7,19 @@ A Kotlin library that provides lifecycle-aware observables for Android, allowing
 - <b>Easy Integration:</b> Seamlessly integrates with Android's ViewModel and Lifecycle components.</br>
 
 ## Installation:
-
-Add the following dependency to your build.gradle:</br>
+To use the Lifecycle Observables library in your project, add the following to your `settings.gradle` file
 ```groovy
-implementation 'com.github.thaer-al-khishen:lifecycle-observables:1.1.0'
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+        // Other repositories
+    }
+}
+```
+
+Then, add the dependency to your module-level build.gradle file:
+```groovy
+implementation "com.github.thaer-al-khishen:lifecycle-observables:1.2.0-beta07"
 ```
 ## Usage:
 
